@@ -1,0 +1,17 @@
+# Development dependencies (extends requirements.txt)
+-r requirements.txt
+
+# Testing
+pytest>=8.0
+pytest-cov>=4.0
+pytest-xdist>=3.0
+
+# Linting & Formatting
+ruff>=0.4
+
+# Type checking
+mypy>=1.10
+
+# Documentation (optional)
+mkdocs>=1.5
+mkdocs-material>=9.0
