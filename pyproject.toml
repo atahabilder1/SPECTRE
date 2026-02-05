@@ -9,7 +9,7 @@ description = "Security assurance toolkit for Ethereum EVM specifications"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-authors = [{ name = "SPECTRE Team" }]
+authors = [{ name = "Anik Tahabilder", email = "anik@wayne.edu" }]
 keywords = ["ethereum", "evm", "security", "testing", "fuzzing"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -68,6 +68,8 @@ select = [
 ignore = [
     "E501",   # line too long (handled by formatter)
     "B008",   # do not perform function calls in argument defaults
+    "SIM102", # nested if statements (sometimes clearer)
+    "SIM108", # ternary operator (sometimes less readable)
 ]
 
 [tool.mypy]

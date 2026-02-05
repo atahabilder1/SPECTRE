@@ -2,9 +2,9 @@
 
 import pytest
 
-from ethereum.common.types import Opcode, State, Environment, Message, ZERO_ADDRESS
+from ethereum.common.types import Environment, Opcode, State
 from ethereum.frontier.vm.interpreter import Interpreter
-from tests.conftest import assemble, push, create_message
+from tests.conftest import assemble, create_message, push
 
 
 @pytest.fixture

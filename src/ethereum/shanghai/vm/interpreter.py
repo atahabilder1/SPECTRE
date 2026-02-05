@@ -86,9 +86,7 @@ class ShanghaiInterpreter(Interpreter):
 
                 # Handle PUSH0 (EIP-3855) - supported in Shanghai
                 if opcode_byte == Opcode.PUSH0:
-                    gas_remaining = self._charge_gas(
-                        gas_remaining, ShanghaiGasSchedule.G_PUSH0
-                    )
+                    gas_remaining = self._charge_gas(gas_remaining, ShanghaiGasSchedule.G_PUSH0)
                     stack.push(0)
                     pc += 1
                     continue

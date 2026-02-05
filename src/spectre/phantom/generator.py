@@ -41,9 +41,7 @@ class BytecodeGeneratorBase(ABC):
         """Generate a single bytecode sample."""
         pass
 
-    def generate_batch(
-        self, count: int, seed: int | None = None
-    ) -> Iterator[GeneratedBytecode]:
+    def generate_batch(self, count: int, seed: int | None = None) -> Iterator[GeneratedBytecode]:
         """Generate multiple bytecode samples."""
         if seed is not None:
             random.seed(seed)
@@ -90,25 +88,48 @@ class GrammarBytecodeGenerator(BytecodeGeneratorBase):
     SWAP_OPCODES = list(range(Opcode.SWAP1, Opcode.SWAP16 + 1))
 
     ARITHMETIC_OPCODES = [
-        Opcode.ADD, Opcode.MUL, Opcode.SUB, Opcode.DIV, Opcode.SDIV,
-        Opcode.MOD, Opcode.SMOD, Opcode.ADDMOD, Opcode.MULMOD, Opcode.EXP,
+        Opcode.ADD,
+        Opcode.MUL,
+        Opcode.SUB,
+        Opcode.DIV,
+        Opcode.SDIV,
+        Opcode.MOD,
+        Opcode.SMOD,
+        Opcode.ADDMOD,
+        Opcode.MULMOD,
+        Opcode.EXP,
     ]
 
     COMPARISON_OPCODES = [
-        Opcode.LT, Opcode.GT, Opcode.SLT, Opcode.SGT, Opcode.EQ, Opcode.ISZERO,
+        Opcode.LT,
+        Opcode.GT,
+        Opcode.SLT,
+        Opcode.SGT,
+        Opcode.EQ,
+        Opcode.ISZERO,
     ]
 
     BITWISE_OPCODES = [
-        Opcode.AND, Opcode.OR, Opcode.XOR, Opcode.NOT, Opcode.BYTE,
-        Opcode.SHL, Opcode.SHR, Opcode.SAR,
+        Opcode.AND,
+        Opcode.OR,
+        Opcode.XOR,
+        Opcode.NOT,
+        Opcode.BYTE,
+        Opcode.SHL,
+        Opcode.SHR,
+        Opcode.SAR,
     ]
 
     MEMORY_OPCODES = [
-        Opcode.MLOAD, Opcode.MSTORE, Opcode.MSTORE8,
+        Opcode.MLOAD,
+        Opcode.MSTORE,
+        Opcode.MSTORE8,
     ]
 
     TERMINATING_OPCODES = [
-        Opcode.STOP, Opcode.RETURN, Opcode.REVERT,
+        Opcode.STOP,
+        Opcode.RETURN,
+        Opcode.REVERT,
     ]
 
     def __init__(self, max_depth: int = 20) -> None:
@@ -140,7 +161,9 @@ class GrammarBytecodeGenerator(BytecodeGeneratorBase):
                 stack_depth += 1
             else:
                 # Can do operations
-                op_type = random.choice(["arithmetic", "comparison", "bitwise", "dup", "swap", "push"])
+                op_type = random.choice(
+                    ["arithmetic", "comparison", "bitwise", "dup", "swap", "push"]
+                )
 
                 if op_type == "arithmetic" and stack_depth >= 2:
                     op = random.choice(self.ARITHMETIC_OPCODES)

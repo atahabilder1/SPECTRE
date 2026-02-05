@@ -2,11 +2,11 @@
 
 import pytest
 
-from ethereum.common.types import Opcode, State, Environment
+from ethereum.common.types import Environment, Opcode, State
 from ethereum.frontier.vm.gas import GasSchedule
 from ethereum.frontier.vm.interpreter import Interpreter
 from ethereum.frontier.vm.memory import Memory
-from tests.conftest import assemble, push, create_message
+from tests.conftest import assemble, create_message, push
 
 
 class TestGasSchedule:
@@ -153,8 +153,12 @@ class TestGasConsumption:
         """Test MSTORE gas without memory expansion."""
         # Memory already expanded
         code = assemble(
-            push(0), push(0), Opcode.MSTORE,  # First store expands
-            push(0), push(0), Opcode.MSTORE,  # Second store doesn't
+            push(0),
+            push(0),
+            Opcode.MSTORE,  # First store expands
+            push(0),
+            push(0),
+            Opcode.MSTORE,  # Second store doesn't
             Opcode.STOP,
         )
         result = interpreter.execute(create_message(code, gas=1000))

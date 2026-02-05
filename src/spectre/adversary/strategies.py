@@ -65,9 +65,7 @@ class TestStrategy(ABC):
     strategy_type: StrategyType
 
     @abstractmethod
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         """Generate test cases for an EIP."""
         pass
 
@@ -87,9 +85,7 @@ class BoundaryValueStrategy(TestStrategy):
 
     strategy_type = StrategyType.BOUNDARY
 
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         boundaries = analyzer.get_boundary_values(eip.number)
 
         for opcode_spec in eip.opcodes:
@@ -115,9 +111,7 @@ class BoundaryValueStrategy(TestStrategy):
                     expected_gas_used=opcode_spec.gas_cost,
                 )
 
-    def generate_overflow_tests(
-        self, opcode_spec: OpcodeSpec
-    ) -> Iterator[TestCase]:
+    def generate_overflow_tests(self, opcode_spec: OpcodeSpec) -> Iterator[TestCase]:
         """Generate overflow boundary tests."""
         max_u256 = 2**256 - 1
 
@@ -141,9 +135,7 @@ class OpcodeInteractionStrategy(TestStrategy):
 
     strategy_type = StrategyType.OPCODE_INTERACTION
 
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         for opcode_spec in eip.opcodes:
             # Test with stack operations
             yield from self._generate_stack_interactions(opcode_spec)
@@ -154,9 +146,7 @@ class OpcodeInteractionStrategy(TestStrategy):
             # Test with control flow
             yield from self._generate_control_flow_interactions(opcode_spec)
 
-    def _generate_stack_interactions(
-        self, opcode_spec: OpcodeSpec
-    ) -> Iterator[TestCase]:
+    def _generate_stack_interactions(self, opcode_spec: OpcodeSpec) -> Iterator[TestCase]:
         """Generate stack operation interactions."""
         # DUP after opcode
         code = bytearray()
@@ -191,9 +181,7 @@ class OpcodeInteractionStrategy(TestStrategy):
                 description=f"Test {opcode_spec.name} followed by SWAP1",
             )
 
-    def _generate_memory_interactions(
-        self, opcode_spec: OpcodeSpec
-    ) -> Iterator[TestCase]:
+    def _generate_memory_interactions(self, opcode_spec: OpcodeSpec) -> Iterator[TestCase]:
         """Generate memory operation interactions."""
         if opcode_spec.stack_output > 0:
             # Store result in memory
@@ -212,9 +200,7 @@ class OpcodeInteractionStrategy(TestStrategy):
                 description=f"Test storing {opcode_spec.name} result in memory",
             )
 
-    def _generate_control_flow_interactions(
-        self, opcode_spec: OpcodeSpec
-    ) -> Iterator[TestCase]:
+    def _generate_control_flow_interactions(self, opcode_spec: OpcodeSpec) -> Iterator[TestCase]:
         """Generate control flow interactions."""
         if opcode_spec.stack_output > 0:
             # Use result in conditional jump
@@ -250,9 +236,7 @@ class CallContextStrategy(TestStrategy):
         ("callcode", Opcode.CALLCODE),
     ]
 
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         for opcode_spec in eip.opcodes:
             for context_name, _ in self.CONTEXTS:
                 yield TestCase(
@@ -277,9 +261,7 @@ class GasExhaustionStrategy(TestStrategy):
 
     strategy_type = StrategyType.GAS_EXHAUSTION
 
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         for opcode_spec in eip.opcodes:
             if opcode_spec.gas_cost:
                 # Test with exact gas
@@ -356,9 +338,7 @@ class ForkBoundaryStrategy(TestStrategy):
 
     strategy_type = StrategyType.FORK_BOUNDARY
 
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         # Test new opcodes that shouldn't work in earlier forks
         for opcode_spec in eip.opcodes:
             yield TestCase(
@@ -392,9 +372,7 @@ class StackDepthStrategy(TestStrategy):
 
     strategy_type = StrategyType.STACK_DEPTH
 
-    def generate(
-        self, eip: EIPSpec, analyzer: EIPAnalyzer
-    ) -> Iterator[TestCase]:
+    def generate(self, eip: EIPSpec, analyzer: EIPAnalyzer) -> Iterator[TestCase]:
         for opcode_spec in eip.opcodes:
             # Test at stack limit
             yield TestCase(

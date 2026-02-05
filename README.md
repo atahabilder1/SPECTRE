@@ -59,7 +59,7 @@
 ## Key Features
 
 | Component | Description |
-|-----------|-------------|
+|:----------|:------------|
 | **miniEELS Core** | Complete Python EVM with 140+ opcodes across 3 forks |
 | **MUTANT** | Mutation testing engine with 8 specialized operators |
 | **PHANTOM** | Differential fuzzer with 5 bytecode generation strategies |
@@ -125,7 +125,7 @@ spectre mutant run --fork frontier --quick
 Complete Python EVM implementation supporting:
 
 | Fork | Block | Key Features |
-|------|-------|--------------|
+|:-----|:------|:-------------|
 | Frontier | 0 | Base EVM, 140+ opcodes |
 | Homestead | 1,150,000 | EIP-2: CREATE changes |
 | Shanghai | 17,034,870 | EIP-3855: PUSH0, EIP-3860: Initcode limits |
@@ -133,7 +133,7 @@ Complete Python EVM implementation supporting:
 ### MUTANT - Mutation Testing
 
 | Operator | Description |
-|----------|-------------|
+|:---------|:------------|
 | `arithmetic_swap` | Swap +, -, *, / operators |
 | `comparison_swap` | Swap <, >, ==, != operators |
 | `off_by_one` | Change constants by ±1 |
@@ -146,7 +146,7 @@ Complete Python EVM implementation supporting:
 ### PHANTOM - Differential Fuzzing
 
 | Strategy | Description |
-|----------|-------------|
+|:---------|:------------|
 | `random` | Random byte sequences |
 | `grammar` | Valid EVM bytecode |
 | `boundary` | Boundary value testing |
@@ -156,7 +156,7 @@ Complete Python EVM implementation supporting:
 ### ADVERSARY - Test Generation
 
 | Strategy | Focus |
-|----------|-------|
+|:---------|:------|
 | `BOUNDARY` | Input boundary values |
 | `OPCODE_INTERACTION` | Opcode combinations |
 | `CALL_CONTEXT` | CALL, DELEGATECALL, etc. |
@@ -189,16 +189,14 @@ spectre/
 ## Documentation
 
 | Document | Description |
-|----------|-------------|
-| [SPECTRE_BOOK.md](docs/SPECTRE_BOOK.md) | Complete guide with chapters and hyperlinks |
-| [SPECTRE_RESEARCH_PAPER.md](docs/SPECTRE_RESEARCH_PAPER.md) | Academic paper format |
-| [BENCHMARKS.md](docs/BENCHMARKS.md) | Performance benchmarks |
-| [THREAT_MODEL.md](docs/THREAT_MODEL.md) | Security analysis |
+|:---------|:------------|
+| [DOCUMENTATION.md](docs/DOCUMENTATION.md) | Complete guide with chapters, API reference, and examples |
+| [REFERENCES.md](manuscript/REFERENCES.md) | Bibliography and research references |
 
 ## Performance
 
 | Metric | Value |
-|--------|-------|
+|:-------|:------|
 | EVM Execution | 13,424 tx/s |
 | Differential Fuzzing | 11,083 tests/s |
 | Test Generation | 88,319 tests/s |
@@ -223,8 +221,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-- Ethereum Foundation for the [Yellow Paper](https://ethereum.github.io/yellowpaper/paper.pdf)
-- [ethereum/execution-specs](https://github.com/ethereum/execution-specs) for reference
+- Ethereum Foundation for the Yellow Paper
 - Wayne State University Department of Computer Science
 
 ---

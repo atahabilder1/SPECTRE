@@ -2,10 +2,10 @@
 
 import pytest
 
-from ethereum.common.types import Opcode, State, Environment
+from ethereum.common.types import Environment, Opcode, State
 from ethereum.frontier.vm.interpreter import Interpreter
 from ethereum.frontier.vm.stack import Stack, StackOverflowError, StackUnderflowError
-from tests.conftest import assemble, push, create_message
+from tests.conftest import assemble, create_message, push
 
 
 class TestStack:

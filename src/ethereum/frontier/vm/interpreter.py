@@ -458,6 +458,7 @@ class Interpreter:
             # Use keccak256 (sha3_256 in hashlib is actually keccak)
             # For proper EVM, we need keccak256, not SHA3-256
             import hashlib
+
             h = hashlib.sha3_256(data).digest()
             stack.push(int.from_bytes(h, "big"))
             return _OpcodeResult(pc=pc + 1, gas_remaining=gas_remaining)
@@ -514,7 +515,9 @@ class Interpreter:
             dest_offset, src_offset, size = stack.pop(), stack.pop(), stack.pop()
             mem_cost = memory.expansion_cost(dest_offset, size)
             copy_cost = self.gas_schedule.copy_cost(size)
-            gas_remaining = self._charge_gas(gas_remaining, self.gas_schedule.G_VERYLOW + mem_cost + copy_cost)
+            gas_remaining = self._charge_gas(
+                gas_remaining, self.gas_schedule.G_VERYLOW + mem_cost + copy_cost
+            )
             data = message.data
             # Copy from calldata, zero-padded
             copy_data = bytearray(size)
@@ -533,7 +536,9 @@ class Interpreter:
             dest_offset, src_offset, size = stack.pop(), stack.pop(), stack.pop()
             mem_cost = memory.expansion_cost(dest_offset, size)
             copy_cost = self.gas_schedule.copy_cost(size)
-            gas_remaining = self._charge_gas(gas_remaining, self.gas_schedule.G_VERYLOW + mem_cost + copy_cost)
+            gas_remaining = self._charge_gas(
+                gas_remaining, self.gas_schedule.G_VERYLOW + mem_cost + copy_cost
+            )
             # Copy from code, zero-padded
             copy_data = bytearray(size)
             for i in range(size):
@@ -584,12 +589,16 @@ class Interpreter:
                 raise EVMError("Return data out of bounds")
             mem_cost = memory.expansion_cost(dest_offset, size)
             copy_cost = self.gas_schedule.copy_cost(size)
-            gas_remaining = self._charge_gas(gas_remaining, self.gas_schedule.G_VERYLOW + mem_cost + copy_cost)
+            gas_remaining = self._charge_gas(
+                gas_remaining, self.gas_schedule.G_VERYLOW + mem_cost + copy_cost
+            )
             memory.store(dest_offset, self.return_data[src_offset : src_offset + size])
             return _OpcodeResult(pc=pc + 1, gas_remaining=gas_remaining)
 
         if opcode == Opcode.EXTCODEHASH:
-            gas_remaining = self._charge_gas(gas_remaining, self.gas_schedule.G_BALANCE)  # Same as BALANCE in Frontier
+            gas_remaining = self._charge_gas(
+                gas_remaining, self.gas_schedule.G_BALANCE
+            )  # Same as BALANCE in Frontier
             addr = stack.pop()
             address = addr.to_bytes(20, "big")
             if not self.state.account_exists(address):
@@ -799,12 +808,8 @@ class Interpreter:
             self.state.increment_nonce(message.target)
 
             # Transfer value
-            self.state.set_balance(
-                message.target, self.state.get_balance(message.target) - value
-            )
-            self.state.set_balance(
-                new_address, self.state.get_balance(new_address) + value
-            )
+            self.state.set_balance(message.target, self.state.get_balance(message.target) - value)
+            self.state.set_balance(new_address, self.state.get_balance(new_address) + value)
 
             # Execute init code
             create_gas = gas_remaining - gas_remaining // 64
@@ -843,14 +848,12 @@ class Interpreter:
 
         if opcode == Opcode.CALL:
             return self._handle_call(
-                pc, stack, memory, message, gas_remaining, logs,
-                call_type="CALL"
+                pc, stack, memory, message, gas_remaining, logs, call_type="CALL"
             )
 
         if opcode == Opcode.CALLCODE:
             return self._handle_call(
-                pc, stack, memory, message, gas_remaining, logs,
-                call_type="CALLCODE"
+                pc, stack, memory, message, gas_remaining, logs, call_type="CALLCODE"
             )
 
         if opcode == Opcode.RETURN:
@@ -864,8 +867,7 @@ class Interpreter:
 
         if opcode == Opcode.DELEGATECALL:
             return self._handle_call(
-                pc, stack, memory, message, gas_remaining, logs,
-                call_type="DELEGATECALL"
+                pc, stack, memory, message, gas_remaining, logs, call_type="DELEGATECALL"
             )
 
         if opcode == Opcode.CREATE2:
@@ -875,7 +877,9 @@ class Interpreter:
             mem_cost = memory.expansion_cost(offset, size)
             # CREATE2 has additional cost for hashing init code
             hash_cost = self.gas_schedule.copy_cost(size)
-            gas_remaining = self._charge_gas(gas_remaining, self.gas_schedule.G_CREATE + mem_cost + hash_cost)
+            gas_remaining = self._charge_gas(
+                gas_remaining, self.gas_schedule.G_CREATE + mem_cost + hash_cost
+            )
 
             # Check balance
             if self.state.get_balance(message.target) < value:
@@ -887,18 +891,15 @@ class Interpreter:
             salt_bytes = salt.to_bytes(32, "big")
 
             from ethereum.common.types import create2_address
+
             new_address = create2_address(message.target, salt_bytes, init_code_hash)
 
             # Increment nonce
             self.state.increment_nonce(message.target)
 
             # Transfer value
-            self.state.set_balance(
-                message.target, self.state.get_balance(message.target) - value
-            )
-            self.state.set_balance(
-                new_address, self.state.get_balance(new_address) + value
-            )
+            self.state.set_balance(message.target, self.state.get_balance(message.target) - value)
+            self.state.set_balance(new_address, self.state.get_balance(new_address) + value)
 
             # Execute init code
             create_gas = gas_remaining - gas_remaining // 64
@@ -935,8 +936,7 @@ class Interpreter:
 
         if opcode == Opcode.STATICCALL:
             return self._handle_call(
-                pc, stack, memory, message, gas_remaining, logs,
-                call_type="STATICCALL"
+                pc, stack, memory, message, gas_remaining, logs, call_type="STATICCALL"
             )
 
         if opcode == Opcode.REVERT:
@@ -1053,12 +1053,8 @@ class Interpreter:
 
         # Handle value transfer for CALL
         if call_type == "CALL" and value > 0:
-            self.state.set_balance(
-                message.target, self.state.get_balance(message.target) - value
-            )
-            self.state.set_balance(
-                address, self.state.get_balance(address) + value
-            )
+            self.state.set_balance(message.target, self.state.get_balance(message.target) - value)
+            self.state.set_balance(address, self.state.get_balance(address) + value)
 
         # Execute call
         call_message = Message(

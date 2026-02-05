@@ -2,9 +2,9 @@
 
 import pytest
 
-from ethereum.common.types import Account, Opcode, State, Environment
+from ethereum.common.types import Account, Environment, Opcode, State
 from ethereum.frontier.vm.interpreter import Interpreter
-from tests.conftest import assemble, push, create_message
+from tests.conftest import assemble, create_message, push
 
 
 @pytest.fixture
@@ -69,8 +69,8 @@ class TestSstore:
     def test_sstore_new_value(self, interpreter):
         """Test storing a new value."""
         code = assemble(
-            push(42),    # value
-            push(100),   # key
+            push(42),  # value
+            push(100),  # key
             Opcode.SSTORE,
             Opcode.STOP,
         )
@@ -83,7 +83,7 @@ class TestSstore:
         """Test overwriting existing value."""
         code = assemble(
             push(999),  # new value
-            push(0),    # existing key
+            push(0),  # existing key
             Opcode.SSTORE,
             Opcode.STOP,
         )
@@ -94,8 +94,8 @@ class TestSstore:
     def test_sstore_zero_clears(self, interpreter):
         """Test storing 0 clears the storage slot."""
         code = assemble(
-            push(0),   # value (clear)
-            push(0),   # existing key
+            push(0),  # value (clear)
+            push(0),  # existing key
             Opcode.SSTORE,
             Opcode.STOP,
         )
@@ -106,7 +106,7 @@ class TestSstore:
     def test_sstore_gas_cost_new(self, interpreter):
         """Test SSTORE gas cost for new storage."""
         code = assemble(
-            push(1),     # value
+            push(1),  # value
             push(9999),  # new key
             Opcode.SSTORE,
             Opcode.STOP,
@@ -120,7 +120,7 @@ class TestSstore:
         """Test SSTORE gas cost for updating existing storage."""
         code = assemble(
             push(999),  # new value
-            push(0),    # existing key (has value 100)
+            push(0),  # existing key (has value 100)
             Opcode.SSTORE,
             Opcode.STOP,
         )
@@ -137,11 +137,11 @@ class TestStorageEdgeCases:
         """Test loading then storing to same slot."""
         code = assemble(
             push(0),
-            Opcode.SLOAD,     # Load existing value
+            Opcode.SLOAD,  # Load existing value
             push(1),
-            Opcode.ADD,       # Add 1
+            Opcode.ADD,  # Add 1
             push(0),
-            Opcode.SSTORE,    # Store back
+            Opcode.SSTORE,  # Store back
             Opcode.STOP,
         )
         result = interpreter.execute(create_message(code))
@@ -152,9 +152,15 @@ class TestStorageEdgeCases:
     def test_multiple_sstores(self, interpreter):
         """Test multiple SSTORE operations."""
         code = assemble(
-            push(1), push(10), Opcode.SSTORE,
-            push(2), push(11), Opcode.SSTORE,
-            push(3), push(12), Opcode.SSTORE,
+            push(1),
+            push(10),
+            Opcode.SSTORE,
+            push(2),
+            push(11),
+            Opcode.SSTORE,
+            push(3),
+            push(12),
+            Opcode.SSTORE,
             Opcode.STOP,
         )
         result = interpreter.execute(create_message(code))

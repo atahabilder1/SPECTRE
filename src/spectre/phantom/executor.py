@@ -147,9 +147,7 @@ class DifferentialExecutor:
             chain_id=1,
         )
 
-    def execute_single(
-        self, code: bytes, fork: Fork
-    ) -> ExecutionTrace:
+    def execute_single(self, code: bytes, fork: Fork) -> ExecutionTrace:
         """Execute bytecode on a single fork."""
         state = self._create_initial_state()
         env = self._create_environment()
@@ -189,50 +187,56 @@ class DifferentialExecutor:
 
         # Compare success status
         if trace_a.result.success != trace_b.result.success:
-            divergences.append(Divergence(
-                divergence_type=DivergenceType.SUCCESS_MISMATCH,
-                bytecode=bytecode,
-                trace_a=trace_a,
-                trace_b=trace_b,
-                description=f"Success mismatch: {trace_a.result.success} vs {trace_b.result.success}",
-            ))
+            divergences.append(
+                Divergence(
+                    divergence_type=DivergenceType.SUCCESS_MISMATCH,
+                    bytecode=bytecode,
+                    trace_a=trace_a,
+                    trace_b=trace_b,
+                    description=f"Success mismatch: {trace_a.result.success} vs {trace_b.result.success}",
+                )
+            )
 
         # Compare return data
         if trace_a.result.return_data != trace_b.result.return_data:
-            divergences.append(Divergence(
-                divergence_type=DivergenceType.RETURN_DATA_MISMATCH,
-                bytecode=bytecode,
-                trace_a=trace_a,
-                trace_b=trace_b,
-                description=f"Return data mismatch: {len(trace_a.result.return_data)} vs {len(trace_b.result.return_data)} bytes",
-            ))
+            divergences.append(
+                Divergence(
+                    divergence_type=DivergenceType.RETURN_DATA_MISMATCH,
+                    bytecode=bytecode,
+                    trace_a=trace_a,
+                    trace_b=trace_b,
+                    description=f"Return data mismatch: {len(trace_a.result.return_data)} vs {len(trace_b.result.return_data)} bytes",
+                )
+            )
 
         # Compare gas used (allow small variations)
         gas_diff = abs(trace_a.result.gas_used - trace_b.result.gas_used)
         if gas_diff > 0 and trace_a.result.success == trace_b.result.success:
-            divergences.append(Divergence(
-                divergence_type=DivergenceType.GAS_USED_MISMATCH,
-                bytecode=bytecode,
-                trace_a=trace_a,
-                trace_b=trace_b,
-                description=f"Gas mismatch: {trace_a.result.gas_used} vs {trace_b.result.gas_used} (diff: {gas_diff})",
-            ))
+            divergences.append(
+                Divergence(
+                    divergence_type=DivergenceType.GAS_USED_MISMATCH,
+                    bytecode=bytecode,
+                    trace_a=trace_a,
+                    trace_b=trace_b,
+                    description=f"Gas mismatch: {trace_a.result.gas_used} vs {trace_b.result.gas_used} (diff: {gas_diff})",
+                )
+            )
 
         # Compare logs
         if len(trace_a.result.logs) != len(trace_b.result.logs):
-            divergences.append(Divergence(
-                divergence_type=DivergenceType.LOGS_MISMATCH,
-                bytecode=bytecode,
-                trace_a=trace_a,
-                trace_b=trace_b,
-                description=f"Log count mismatch: {len(trace_a.result.logs)} vs {len(trace_b.result.logs)}",
-            ))
+            divergences.append(
+                Divergence(
+                    divergence_type=DivergenceType.LOGS_MISMATCH,
+                    bytecode=bytecode,
+                    trace_a=trace_a,
+                    trace_b=trace_b,
+                    description=f"Log count mismatch: {len(trace_a.result.logs)} vs {len(trace_b.result.logs)}",
+                )
+            )
 
         return divergences
 
-    def execute_differential(
-        self, bytecode: GeneratedBytecode
-    ) -> list[Divergence]:
+    def execute_differential(self, bytecode: GeneratedBytecode) -> list[Divergence]:
         """Execute bytecode on both forks and compare."""
         trace_a = self.execute_single(bytecode.code, self.fork_a)
         trace_b = self.execute_single(bytecode.code, self.fork_b)

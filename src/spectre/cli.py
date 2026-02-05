@@ -202,7 +202,9 @@ def phantom_run(
     from spectre.phantom.generator import BytecodeGenerator, GeneratorStrategy
 
     console.print(
-        Panel(f"[bold]PHANTOM[/bold] - Differential Fuzzing ({fork_a} vs {fork_b})", style="magenta")
+        Panel(
+            f"[bold]PHANTOM[/bold] - Differential Fuzzing ({fork_a} vs {fork_b})", style="magenta"
+        )
     )
 
     # Map fork names to enums

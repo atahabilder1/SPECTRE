@@ -82,7 +82,7 @@ class DeltaDebugger:
         chunks = []
 
         for i in range(0, len(bytecode), chunk_size):
-            chunks.append(bytecode[i:i + chunk_size])
+            chunks.append(bytecode[i : i + chunk_size])
 
         return chunks
 
@@ -168,7 +168,7 @@ class DeltaDebugger:
 
             while i < len(current) and iterations < max_iterations:
                 iterations += 1
-                candidate = current[:i] + current[i + 1:]
+                candidate = current[:i] + current[i + 1 :]
 
                 if len(candidate) > 0 and self._test_bytecode(candidate):
                     current = candidate

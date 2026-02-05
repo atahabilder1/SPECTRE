@@ -7,10 +7,10 @@ EIP-2: Homestead Hard-fork Changes
 
 import pytest
 
-from ethereum.common.types import Account, Environment, State, Transaction, Opcode
+from ethereum.common.types import Account, Environment, Opcode, State, Transaction
 from ethereum.homestead.fork import state_transition
-from ethereum.homestead.vm.interpreter import HomesteadInterpreter, HomesteadGasSchedule
-from tests.conftest import assemble, push, create_message
+from ethereum.homestead.vm.interpreter import HomesteadGasSchedule, HomesteadInterpreter
+from tests.conftest import create_message
 
 
 @pytest.fixture
@@ -69,14 +69,20 @@ class TestEIP2ContractCreation:
         sender = b"\x00" * 19 + b"\x01"
 
         # Simple contract that returns 0x42
-        init_code = bytes([
-            0x60, 0x42,  # PUSH1 0x42
-            0x60, 0x00,  # PUSH1 0
-            0x53,        # MSTORE8
-            0x60, 0x01,  # PUSH1 1
-            0x60, 0x00,  # PUSH1 0
-            0xF3,        # RETURN
-        ])
+        init_code = bytes(
+            [
+                0x60,
+                0x42,  # PUSH1 0x42
+                0x60,
+                0x00,  # PUSH1 0
+                0x53,  # MSTORE8
+                0x60,
+                0x01,  # PUSH1 1
+                0x60,
+                0x00,  # PUSH1 0
+                0xF3,  # RETURN
+            ]
+        )
 
         tx = Transaction(
             sender=sender,
@@ -125,11 +131,15 @@ class TestEIP2ContractCreation:
         sender = b"\x00" * 19 + b"\x01"
 
         # Contract that returns large code
-        init_code = bytes([
-            0x60, 0xFF,  # PUSH1 255
-            0x60, 0x00,  # PUSH1 0
-            0xF3,        # RETURN (returns 255 zero bytes)
-        ])
+        init_code = bytes(
+            [
+                0x60,
+                0xFF,  # PUSH1 255
+                0x60,
+                0x00,  # PUSH1 0
+                0xF3,  # RETURN (returns 255 zero bytes)
+            ]
+        )
 
         tx = Transaction(
             sender=sender,
@@ -152,11 +162,15 @@ class TestEIP2ContractCreation:
         sender = b"\x00" * 19 + b"\x01"
 
         # Constructor that reverts
-        init_code = bytes([
-            0x60, 0x00,  # PUSH1 0
-            0x60, 0x00,  # PUSH1 0
-            0xFD,        # REVERT
-        ])
+        init_code = bytes(
+            [
+                0x60,
+                0x00,  # PUSH1 0
+                0x60,
+                0x00,  # PUSH1 0
+                0xFD,  # REVERT
+            ]
+        )
 
         tx = Transaction(
             sender=sender,

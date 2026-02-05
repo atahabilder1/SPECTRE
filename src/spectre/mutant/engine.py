@@ -97,9 +97,7 @@ class MutationEngine:
         """Find all source files to mutate."""
         return list(self.source_dir.rglob(pattern))
 
-    def generate_mutations(
-        self, file_path: Path
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, file_path: Path) -> Iterator[Mutation]:
         """Generate all mutations for a single file."""
         source = file_path.read_text()
         rel_path = str(file_path.relative_to(self.source_dir))
@@ -112,9 +110,7 @@ class MutationEngine:
         for file_path in self.find_source_files():
             yield from self.generate_mutations(file_path)
 
-    def apply_mutation(
-        self, mutation: Mutation, target_dir: Path
-    ) -> Path:
+    def apply_mutation(self, mutation: Mutation, target_dir: Path) -> Path:
         """
         Apply a mutation to a copy of the source.
 

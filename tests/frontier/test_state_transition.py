@@ -2,7 +2,7 @@
 
 import pytest
 
-from ethereum.common.types import Account, Environment, State, Transaction, ZERO_ADDRESS
+from ethereum.common.types import Account, Environment, State, Transaction
 from ethereum.frontier.fork import state_transition, validate_transaction
 
 
@@ -128,14 +128,20 @@ class TestStateTransition:
         sender = b"\x00" * 19 + b"\x01"
 
         # Simple contract: PUSH1 0x42, PUSH1 0, MSTORE, PUSH1 32, PUSH1 0, RETURN
-        init_code = bytes([
-            0x60, 0x42,  # PUSH1 0x42
-            0x60, 0x00,  # PUSH1 0
-            0x52,        # MSTORE
-            0x60, 0x20,  # PUSH1 32
-            0x60, 0x00,  # PUSH1 0
-            0xF3,        # RETURN
-        ])
+        init_code = bytes(
+            [
+                0x60,
+                0x42,  # PUSH1 0x42
+                0x60,
+                0x00,  # PUSH1 0
+                0x52,  # MSTORE
+                0x60,
+                0x20,  # PUSH1 32
+                0x60,
+                0x00,  # PUSH1 0
+                0xF3,  # RETURN
+            ]
+        )
 
         tx = Transaction(
             sender=sender,

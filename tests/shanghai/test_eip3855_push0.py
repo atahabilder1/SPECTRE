@@ -10,8 +10,8 @@ import pytest
 
 from ethereum.common.types import Account, Environment, Opcode, State, Transaction
 from ethereum.shanghai.fork import state_transition
-from ethereum.shanghai.vm.interpreter import ShanghaiInterpreter, ShanghaiGasSchedule
-from tests.conftest import assemble, push, create_message
+from ethereum.shanghai.vm.interpreter import ShanghaiGasSchedule, ShanghaiInterpreter
+from tests.conftest import assemble, create_message, push
 
 
 @pytest.fixture
@@ -100,12 +100,14 @@ class TestPush0Opcode:
         interpreter = ShanghaiInterpreter(state, env)
 
         # Push three zeros
-        code = bytes([
-            Opcode.PUSH0,
-            Opcode.PUSH0,
-            Opcode.PUSH0,
-            Opcode.STOP,
-        ])
+        code = bytes(
+            [
+                Opcode.PUSH0,
+                Opcode.PUSH0,
+                Opcode.PUSH0,
+                Opcode.STOP,
+            ]
+        )
 
         result = interpreter.execute(create_message(code, gas=100))
         assert result.success
@@ -118,11 +120,11 @@ class TestPush0Opcode:
 
         # 5 + 0 = 5, then 5 * 0 = 0
         code = assemble(
-            Opcode.PUSH0,     # Push 0
-            push(5),          # Push 5
-            Opcode.ADD,       # 5 + 0 = 5
-            Opcode.PUSH0,     # Push 0
-            Opcode.MUL,       # 5 * 0 = 0
+            Opcode.PUSH0,  # Push 0
+            push(5),  # Push 5
+            Opcode.ADD,  # 5 + 0 = 5
+            Opcode.PUSH0,  # Push 0
+            Opcode.MUL,  # 5 * 0 = 0
             Opcode.STOP,
         )
 
@@ -135,12 +137,12 @@ class TestPush0Opcode:
 
         # Store 0x42 at memory[0] using PUSH0 for offset
         code = assemble(
-            push(0x42),       # value
-            Opcode.PUSH0,     # offset (0)
-            Opcode.MSTORE,    # Store at memory[0]
-            push(32),         # size
-            Opcode.PUSH0,     # offset (0)
-            Opcode.RETURN,    # Return memory[0:32]
+            push(0x42),  # value
+            Opcode.PUSH0,  # offset (0)
+            Opcode.MSTORE,  # Store at memory[0]
+            push(32),  # size
+            Opcode.PUSH0,  # offset (0)
+            Opcode.RETURN,  # Return memory[0:32]
         )
 
         result = interpreter.execute(create_message(code))
@@ -155,8 +157,8 @@ class TestPush0Opcode:
 
         # Store value 123 at storage[0] using PUSH0
         code = assemble(
-            push(123),        # value
-            Opcode.PUSH0,     # key (0)
+            push(123),  # value
+            Opcode.PUSH0,  # key (0)
             Opcode.SSTORE,
             Opcode.STOP,
         )
@@ -175,14 +177,17 @@ class TestPush0InContractCreation:
 
         # Init code using PUSH0
         # PUSH0, PUSH0, MSTORE, PUSH1 32, PUSH0, RETURN
-        init_code = bytes([
-            Opcode.PUSH0,     # Push 0 (value)
-            Opcode.PUSH0,     # Push 0 (offset)
-            0x52,             # MSTORE
-            0x60, 0x20,       # PUSH1 32
-            Opcode.PUSH0,     # Push 0 (offset)
-            0xF3,             # RETURN
-        ])
+        init_code = bytes(
+            [
+                Opcode.PUSH0,  # Push 0 (value)
+                Opcode.PUSH0,  # Push 0 (offset)
+                0x52,  # MSTORE
+                0x60,
+                0x20,  # PUSH1 32
+                Opcode.PUSH0,  # Push 0 (offset)
+                0xF3,  # RETURN
+            ]
+        )
 
         tx = Transaction(
             sender=sender,
@@ -208,14 +213,17 @@ class TestPush0InContractCreation:
 
         # Contract code using PUSH0: returns 0
         # PUSH0, PUSH0, MSTORE, PUSH1 32, PUSH0, RETURN
-        code = bytes([
-            Opcode.PUSH0,
-            Opcode.PUSH0,
-            0x52,        # MSTORE
-            0x60, 0x20,  # PUSH1 32
-            Opcode.PUSH0,
-            0xF3,        # RETURN
-        ])
+        code = bytes(
+            [
+                Opcode.PUSH0,
+                Opcode.PUSH0,
+                0x52,  # MSTORE
+                0x60,
+                0x20,  # PUSH1 32
+                Opcode.PUSH0,
+                0xF3,  # RETURN
+            ]
+        )
         funded_state.set_code(contract, code)
 
         tx = Transaction(
@@ -299,13 +307,16 @@ class TestShanghaiStateTransition:
         # Init code that returns code larger than 24576 bytes
         # PUSH2 size, PUSH1 0, RETURN
         large_size = 25000
-        init_code = bytes([
-            0x61,                          # PUSH2
-            (large_size >> 8) & 0xFF,      # size high byte
-            large_size & 0xFF,             # size low byte
-            0x60, 0x00,                    # PUSH1 0
-            0xF3,                          # RETURN
-        ])
+        init_code = bytes(
+            [
+                0x61,  # PUSH2
+                (large_size >> 8) & 0xFF,  # size high byte
+                large_size & 0xFF,  # size low byte
+                0x60,
+                0x00,  # PUSH1 0
+                0xF3,  # RETURN
+            ]
+        )
 
         tx = Transaction(
             sender=sender,

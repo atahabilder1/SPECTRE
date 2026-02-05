@@ -1,21 +1,19 @@
 """Tests for PHANTOM differential fuzzer."""
 
-import pytest
-
 from ethereum.common.types import Opcode
-from spectre.phantom.generator import (
-    BytecodeGenerator,
-    RandomBytecodeGenerator,
-    GrammarBytecodeGenerator,
-    BoundaryBytecodeGenerator,
-    GeneratorStrategy,
-)
 from spectre.phantom.executor import (
     DifferentialExecutor,
-    Fork,
     DivergenceType,
+    Fork,
 )
-from spectre.phantom.minimizer import DeltaDebugger, CustomMinimizer
+from spectre.phantom.generator import (
+    BoundaryBytecodeGenerator,
+    BytecodeGenerator,
+    GeneratorStrategy,
+    GrammarBytecodeGenerator,
+    RandomBytecodeGenerator,
+)
+from spectre.phantom.minimizer import CustomMinimizer
 
 
 class TestRandomBytecodeGenerator:
@@ -65,10 +63,7 @@ class TestGrammarBytecodeGenerator:
         result = gen.generate(seed=42)
 
         # Should contain at least one PUSH
-        has_push = any(
-            Opcode.PUSH1 <= b <= Opcode.PUSH32
-            for b in result.code
-        )
+        has_push = any(Opcode.PUSH1 <= b <= Opcode.PUSH32 for b in result.code)
         assert has_push
 
     def test_respects_max_depth(self):
@@ -178,8 +173,10 @@ class TestDifferentialExecutor:
         # Gas differences are expected between forks
         # Only check for major divergences
         major = [
-            d for d in unexpected
-            if d.divergence_type in (DivergenceType.SUCCESS_MISMATCH, DivergenceType.RETURN_DATA_MISMATCH)
+            d
+            for d in unexpected
+            if d.divergence_type
+            in (DivergenceType.SUCCESS_MISMATCH, DivergenceType.RETURN_DATA_MISMATCH)
         ]
         assert len(major) == 0
 
@@ -189,6 +186,7 @@ class TestDeltaDebugger:
 
     def test_minimize_simple(self):
         """Test minimization of simple case."""
+
         # Test predicate: bytecode contains 0x5F (PUSH0)
         def has_push0(code: bytes) -> bool:
             return 0x5F in code

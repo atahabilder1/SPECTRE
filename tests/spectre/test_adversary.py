@@ -1,21 +1,19 @@
 """Tests for ADVERSARY test generator."""
 
-import pytest
-
 from spectre.adversary.analyzer import (
     EIPAnalyzer,
     EIPCategory,
     OpcodeChange,
 )
+from spectre.adversary.generator import TestGenerator, TestSuite
 from spectre.adversary.strategies import (
     BoundaryValueStrategy,
-    OpcodeInteractionStrategy,
-    GasExhaustionStrategy,
     ForkBoundaryStrategy,
+    GasExhaustionStrategy,
+    OpcodeInteractionStrategy,
     StrategyType,
     get_all_strategies,
 )
-from spectre.adversary.generator import TestGenerator, TestSuite
 
 
 class TestEIPAnalyzer:
@@ -262,6 +260,7 @@ class TestTestSuite:
         json_str = suite.to_json()
 
         import json
+
         data = json.loads(json_str)
         assert data["eip_number"] == 3855
 

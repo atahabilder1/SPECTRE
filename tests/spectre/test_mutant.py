@@ -1,14 +1,12 @@
 """Tests for MUTANT mutation testing engine."""
 
-import pytest
-
 from spectre.mutant.operators import (
     ArithmeticSwapOperator,
     ComparisonSwapOperator,
-    OffByOneOperator,
     GasCostOperator,
     LogicNegateOperator,
     MutationType,
+    OffByOneOperator,
     get_all_operators,
 )
 

@@ -199,17 +199,27 @@ class EIPAnalyzer:
             values.extend([gas - 1, gas, gas + 1])
 
         # Add standard EVM boundaries
-        values.extend([
-            0, 1,
-            255, 256,
-            2**15 - 1, 2**15,
-            2**16 - 1, 2**16,
-            2**32 - 1, 2**32,
-            2**64 - 1, 2**64,
-            2**128 - 1, 2**128,
-            2**255 - 1, 2**255,
-            2**256 - 1,
-        ])
+        values.extend(
+            [
+                0,
+                1,
+                255,
+                256,
+                2**15 - 1,
+                2**15,
+                2**16 - 1,
+                2**16,
+                2**32 - 1,
+                2**32,
+                2**64 - 1,
+                2**64,
+                2**128 - 1,
+                2**128,
+                2**255 - 1,
+                2**255,
+                2**256 - 1,
+            ]
+        )
 
         return sorted(set(values))
 
@@ -218,9 +228,7 @@ class EIPAnalyzer:
         eip = self.get_eip(number)
         return eip.related_eips if eip else []
 
-    def analyze_opcode_interactions(
-        self, number: int
-    ) -> list[tuple[int, int]]:
+    def analyze_opcode_interactions(self, number: int) -> list[tuple[int, int]]:
         """Find opcodes that might interact with EIP changes."""
         eip = self.get_eip(number)
         if not eip:

@@ -38,7 +38,9 @@ class Mutation:
     description: str
 
     def __str__(self) -> str:
-        return f"{self.mutation_type.name} at {self.file_path}:{self.line_number}: {self.description}"
+        return (
+            f"{self.mutation_type.name} at {self.file_path}:{self.line_number}: {self.description}"
+        )
 
 
 class MutationOperator(ABC):
@@ -48,9 +50,7 @@ class MutationOperator(ABC):
     description: str = "Base mutation operator"
 
     @abstractmethod
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         """Generate mutations for the given source code."""
         pass
 
@@ -70,9 +70,7 @@ class ArithmeticSwapOperator(MutationOperator):
         "//": "*",
     }
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             # Skip comments and strings
@@ -115,9 +113,7 @@ class ComparisonSwapOperator(MutationOperator):
         "!=": "==",
     }
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
@@ -149,9 +145,7 @@ class OffByOneOperator(MutationOperator):
     name = "off_by_one"
     description = "Introduces off-by-one errors"
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
@@ -162,9 +156,7 @@ class OffByOneOperator(MutationOperator):
                 value = int(match.group(1))
 
                 # Generate +1 mutation
-                mutated_plus = (
-                    line[: match.start()] + str(value + 1) + line[match.end() :]
-                )
+                mutated_plus = line[: match.start()] + str(value + 1) + line[match.end() :]
                 yield Mutation(
                     mutation_type=MutationType.OFF_BY_ONE,
                     file_path=file_path,
@@ -176,11 +168,7 @@ class OffByOneOperator(MutationOperator):
 
                 # Generate -1 mutation (only if > 0)
                 if value > 0:
-                    mutated_minus = (
-                        line[: match.start()]
-                        + str(value - 1)
-                        + line[match.end() :]
-                    )
+                    mutated_minus = line[: match.start()] + str(value - 1) + line[match.end() :]
                     yield Mutation(
                         mutation_type=MutationType.OFF_BY_ONE,
                         file_path=file_path,
@@ -199,9 +187,7 @@ class GasCostOperator(MutationOperator):
 
     GAS_PATTERN = re.compile(r"G_\w+\s*[=:]\s*(\d+)")
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
@@ -211,11 +197,7 @@ class GasCostOperator(MutationOperator):
                 value = int(match.group(1))
 
                 # Double the gas cost
-                mutated_double = (
-                    line[: match.start(1)]
-                    + str(value * 2)
-                    + line[match.end(1) :]
-                )
+                mutated_double = line[: match.start(1)] + str(value * 2) + line[match.end(1) :]
                 yield Mutation(
                     mutation_type=MutationType.GAS_COST,
                     file_path=file_path,
@@ -227,11 +209,7 @@ class GasCostOperator(MutationOperator):
 
                 # Halve the gas cost
                 if value > 1:
-                    mutated_half = (
-                        line[: match.start(1)]
-                        + str(value // 2)
-                        + line[match.end(1) :]
-                    )
+                    mutated_half = line[: match.start(1)] + str(value // 2) + line[match.end(1) :]
                     yield Mutation(
                         mutation_type=MutationType.GAS_COST,
                         file_path=file_path,
@@ -248,9 +226,7 @@ class LogicNegateOperator(MutationOperator):
     name = "logic_negate"
     description = "Negates boolean conditions"
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
@@ -280,9 +256,7 @@ class ReturnValueOperator(MutationOperator):
     name = "return_value"
     description = "Modifies return values"
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
@@ -347,9 +321,7 @@ class BoundaryChangeOperator(MutationOperator):
         "2**255": ["2**255 - 1", "2**255 + 1"],
     }
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
@@ -380,16 +352,14 @@ class ConstantChangeOperator(MutationOperator):
         "ZERO_ADDRESS": 'b"\\x00" * 19 + b"\\x01"',
     }
 
-    def generate_mutations(
-        self, source: str, file_path: str
-    ) -> Iterator[Mutation]:
+    def generate_mutations(self, source: str, file_path: str) -> Iterator[Mutation]:
         lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             if line.strip().startswith("#"):
                 continue
 
             for constant, replacement in self.CONSTANTS.items():
-                if constant in line and "=" not in line[:line.index(constant)]:
+                if constant in line and "=" not in line[: line.index(constant)]:
                     mutated_line = line.replace(constant, replacement, 1)
                     yield Mutation(
                         mutation_type=MutationType.CONSTANT_CHANGE,

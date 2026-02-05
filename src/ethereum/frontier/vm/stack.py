@@ -62,7 +62,9 @@ class Stack:
             StackUnderflowError: If depth exceeds stack size
         """
         if depth >= len(self._data):
-            raise StackUnderflowError(f"Cannot peek at depth {depth}, stack size is {len(self._data)}")
+            raise StackUnderflowError(
+                f"Cannot peek at depth {depth}, stack size is {len(self._data)}"
+            )
         return self._data[-(depth + 1)]
 
     def set(self, depth: int, value: int) -> None:
@@ -74,7 +76,9 @@ class Stack:
             value: The value to set
         """
         if depth >= len(self._data):
-            raise StackUnderflowError(f"Cannot set at depth {depth}, stack size is {len(self._data)}")
+            raise StackUnderflowError(
+                f"Cannot set at depth {depth}, stack size is {len(self._data)}"
+            )
         self._data[-(depth + 1)] = u256(value)
 
     def dup(self, n: int) -> None:

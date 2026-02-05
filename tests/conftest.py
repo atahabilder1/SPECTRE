@@ -5,12 +5,11 @@ from __future__ import annotations
 import pytest
 
 from ethereum.common.types import (
+    ZERO_ADDRESS,
     Account,
     Environment,
     Message,
     State,
-    Transaction,
-    ZERO_ADDRESS,
 )
 from ethereum.frontier.vm.interpreter import Interpreter as FrontierInterpreter
 from ethereum.frontier.vm.memory import Memory

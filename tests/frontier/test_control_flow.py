@@ -2,9 +2,9 @@
 
 import pytest
 
-from ethereum.common.types import Opcode, State, Environment
+from ethereum.common.types import Environment, Opcode, State
 from ethereum.frontier.vm.interpreter import Interpreter
-from tests.conftest import assemble, push, create_message
+from tests.conftest import assemble, create_message, push
 
 
 @pytest.fixture
@@ -32,7 +32,7 @@ class TestJump:
         """Test jumping to invalid destination fails."""
         # Try to jump to non-JUMPDEST
         code = assemble(
-            push(3),        # Jump to STOP (not JUMPDEST)
+            push(3),  # Jump to STOP (not JUMPDEST)
             Opcode.JUMP,
             Opcode.INVALID,
             Opcode.STOP,
@@ -44,12 +44,17 @@ class TestJump:
     def test_jump_to_push_data(self, interpreter):
         """Test jumping into PUSH data fails."""
         # PUSH2 0x5B5B (contains JUMPDEST bytes), jump to middle
-        code = bytes([
-            0x61, 0x5B, 0x5B,  # PUSH2 0x5B5B
-            0x60, 0x01,       # PUSH1 1 (try to jump here)
-            0x56,             # JUMP
-            0x00,             # STOP
-        ])
+        code = bytes(
+            [
+                0x61,
+                0x5B,
+                0x5B,  # PUSH2 0x5B5B
+                0x60,
+                0x01,  # PUSH1 1 (try to jump here)
+                0x56,  # JUMP
+                0x00,  # STOP
+            ]
+        )
         result = interpreter.execute(create_message(code))
         assert not result.success
 
@@ -69,8 +74,8 @@ class TestJumpi:
     def test_jumpi_condition_true(self, interpreter):
         """Test JUMPI jumps when condition is non-zero."""
         code = assemble(
-            push(1),        # condition (true)
-            push(6),        # destination
+            push(1),  # condition (true)
+            push(6),  # destination
             Opcode.JUMPI,
             Opcode.INVALID,
             Opcode.JUMPDEST,
@@ -82,10 +87,10 @@ class TestJumpi:
     def test_jumpi_condition_false(self, interpreter):
         """Test JUMPI falls through when condition is zero."""
         code = assemble(
-            push(0),        # condition (false)
-            push(7),        # destination (won't jump)
+            push(0),  # condition (false)
+            push(7),  # destination (won't jump)
             Opcode.JUMPI,
-            Opcode.STOP,    # Should reach here
+            Opcode.STOP,  # Should reach here
             Opcode.INVALID,
             Opcode.JUMPDEST,
         )
@@ -98,10 +103,10 @@ class TestJumpi:
         # JUMPDEST is at position 37
         code = assemble(
             push(2**255, 32),  # Large non-zero (true) - 33 bytes
-            push(37),           # destination - 2 bytes
-            Opcode.JUMPI,       # 1 byte
-            Opcode.INVALID,     # 1 byte (skipped by jump)
-            Opcode.JUMPDEST,    # at position 37
+            push(37),  # destination - 2 bytes
+            Opcode.JUMPI,  # 1 byte
+            Opcode.INVALID,  # 1 byte (skipped by jump)
+            Opcode.JUMPDEST,  # at position 37
             Opcode.STOP,
         )
         result = interpreter.execute(create_message(code))
@@ -177,8 +182,8 @@ class TestReturn:
             push(0x42),
             push(0),
             Opcode.MSTORE,  # Store 0x42 at memory[0]
-            push(32),       # size
-            push(0),        # offset
+            push(32),  # size
+            push(0),  # offset
             Opcode.RETURN,
         )
         result = interpreter.execute(create_message(code))
